@@ -11,7 +11,8 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Entity, Table(name: 'movements')]
@@ -20,10 +21,12 @@ class Movement implements \JsonSerializable
     #[Id, Column(type: 'integer'), GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[OneToMany(mappedBy: 'user', targetEntity: User::class)]
+    #[ManyToOne(targetEntity: User::class)]
+    #[JoinColumn(name: 'user_id', referencedColumnName: 'id')]
     private ?User $user;
 
-    #[OneToMany(mappedBy: 'category', targetEntity: Category::class)]
+    #[ManyToOne(targetEntity: Category::class)]
+    #[JoinColumn(name: 'category_id', referencedColumnName: 'id')]
     private Category $category;
 
     #[Column(type: 'integer', nullable: false, enumType: MovementTypeEnum::class)]
@@ -43,6 +46,17 @@ class Movement implements \JsonSerializable
 
     #[Column(name: 'updated_at', type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
     private \DateTime $updatedAt;
+
+    public function __construct(Category $category, int $type, float $value, ?string $date = null, ?string $obs = null)
+    {
+        $this->setCategory($category)
+            ->setType($type)
+            ->setDate($date)
+            ->setValue($value)
+            ->setObs($obs)
+            ->setCreatedAt()
+            ->setUpdatedAt();
+    }
 
     public function getId(): int
     {
@@ -71,9 +85,9 @@ class Movement implements \JsonSerializable
         return $this->type;
     }
 
-    public function setType(MovementTypeEnum $type): self
+    public function setType(int $type): self
     {
-        $this->type = $type;
+        $this->type = MovementTypeEnum::make($type);
         return $this;
     }
 
@@ -93,9 +107,10 @@ class Movement implements \JsonSerializable
         return DateTimeHelper::formatDateTime($this->date);
     }
 
-    public function setDate(\DateTime $date): self
+    public function setDate(?string $date): self
     {
-        $this->date = $date;
+        $date = $date ?? date('Y-m-d');
+        $this->date = \DateTime::createFromFormat('Y-m-d', $date);
         return $this;
     }
 
@@ -136,11 +151,11 @@ class Movement implements \JsonSerializable
         return $this->category;
     }
 
-    public function setCategory(Category $category): void
+    public function setCategory(Category $category): self
     {
         $this->category = $category;
+        return $this;
     }
-
 
     public function jsonSerialize(): array
     {
