@@ -48,12 +48,7 @@ $defaultRoutes = require_once __DIR__ . '/../app/routes.php';
 $defaultRoutes($app);
 // Register all routes in dir
 $routesDir = __DIR__ . '/../app/routes';
-$routesFiles = scandir($routesDir);
-foreach ($routesFiles as $routesFile) {
-	if (!str_contains($routesFile, '.php')) continue;
-	$routeHandle = require_once "$routesDir/$routesFile";
-	$routeHandle($app);
-}
+\App\Application\Helper\RouteHelper::loadAllRoutesFromDir($routesDir, $app);
 
 /** @var SettingsInterface $settings */
 $settings = $container->get(SettingsInterface::class);

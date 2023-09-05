@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Table;
 use JsonSerializable;
-use ReflectionClass;
 
 #[Entity, Table(name: 'categories')]
 class Category implements JsonSerializable

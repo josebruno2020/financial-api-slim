@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use App\Application\Helper\RouteHelper;
 use DI\ContainerBuilder;
 use Exception;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
@@ -56,9 +57,9 @@ class TestCase extends PHPUnit_TestCase
 
         // Register routes
         $routes = require __DIR__ . '/../app/routes.php';
-        $categoriesRoutes = require __DIR__ . "/../app/routes/categories.php";
+        $routesDir = __DIR__ . '/../app/routes';
+        RouteHelper::loadAllRoutesFromDir($routesDir, $app);
         $routes($app);
-        $categoriesRoutes($app);
 
         return $app;
     }

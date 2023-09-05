@@ -47,13 +47,14 @@ class Movement implements \JsonSerializable
     #[Column(name: 'updated_at', type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
     private \DateTime $updatedAt;
 
-    public function __construct(Category $category, int $type, float $value, ?string $date = null, ?string $obs = null)
+    public function __construct(Category $category, int $type, float $value, ?string $date = null, ?string $obs = null, ?int $id = null)
     {
         $this->setCategory($category)
             ->setType($type)
             ->setDate($date)
             ->setValue($value)
             ->setObs($obs)
+            ->setId($id)
             ->setCreatedAt()
             ->setUpdatedAt();
     }
@@ -102,15 +103,15 @@ class Movement implements \JsonSerializable
         return $this;
     }
 
-    public function getDate(): string
+    public function getDate(): ?string
     {
         return DateTimeHelper::formatDateTime($this->date);
     }
 
     public function setDate(?string $date): self
     {
-        $date = $date ?? date('Y-m-d');
-        $this->date = \DateTime::createFromFormat('Y-m-d', $date);
+        $date = $date ? date('Y-m-d H:i:s', strtotime($date)) : date('Y-m-d H:i:s');
+        $this->date = \DateTime::createFromFormat('Y-m-d H:i:s', $date);
         return $this;
     }
 
