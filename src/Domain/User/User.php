@@ -102,6 +102,4 @@ class User implements JsonSerializable
         $this->id = $id;
         return $this;
     }
-
-
 }

@@ -14,6 +14,8 @@ if (!defined('APP_ROOT')) {
 $dotenv = Dotenv\Dotenv::createImmutable(APP_ROOT);
 $dotenv->load();
 
+date_default_timezone_set('America/Sao_Paulo');
+
 return function (ContainerBuilder $containerBuilder) {
 
     // Global Settings Object

@@ -2,8 +2,6 @@
 
 namespace App\Application\Middleware;
 
-namespace App\Application\Middleware;
-
 use App\Domain\DomainException\DomainInvalidArgumentException;
 use App\Domain\User\UserRepository;
 use App\Domain\Validation\DomainValidationHelper;
@@ -30,7 +28,7 @@ class UserCreateValidationMiddleware implements Middleware
      */
     public function process(Request $request, RequestHandler $handler): Response
     {
-        $body = $request->getParsedBody();
+        $body = $request->getParsedBody() ?? [];
         $fields = ['username', 'firstName', 'lastName'];
         try {
             $this->validationHelper->validateRequiredArguments($fields, $body);

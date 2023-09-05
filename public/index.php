@@ -45,7 +45,9 @@ $middleware($app);
 
 // Register routes
 $routes = require_once __DIR__ . '/../app/routes.php';
+$categoriesRoutes = require_once __DIR__ . '/../app/routes/categories.php';
 $routes($app);
+$categoriesRoutes($app);
 
 /** @var SettingsInterface $settings */
 $settings = $container->get(SettingsInterface::class);
