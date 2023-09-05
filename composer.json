@@ -60,6 +60,7 @@
     },
     "scripts": {
         "dev": "php -S localhost:8080 -t public",
-        "test": "php vendor/bin/phpunit --testdox --coverage-clover clover.xml"
+        "test": "php vendor/bin/phpunit --testdox --coverage-clover clover.xml",
+        "analyze": "php vendor/bin/phpstan"
     }
 }

@@ -1,13 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Category;
 
+use App\Domain\Helper\DateTimeHelper;
+use App\Domain\Helper\JsonSerializeHelper;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Table;
 use JsonSerializable;
+use ReflectionClass;
 
 #[Entity, Table(name: 'categories')]
 class Category implements JsonSerializable
@@ -46,13 +51,13 @@ class Category implements JsonSerializable
 
     public function setName(?string $name): self
     {
-        $this->name = $name;
+        $this->name = ucfirst($name);
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTime
+    public function getCreatedAt(): ?string
     {
-        return $this->createdAt;
+        return DateTimeHelper::formatDateTime($this->createdAt);
     }
 
     public function setCreatedAt(): self
@@ -63,8 +68,6 @@ class Category implements JsonSerializable
 
     public function jsonSerialize(): array
     {
-        $values = get_object_vars($this);
-        $values['createdAt'] = $this->createdAt?->format('Y-m-d H:i:s');
-        return $values;
+        return JsonSerializeHelper::toJson(get_object_vars($this));
     }
 }

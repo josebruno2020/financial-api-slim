@@ -56,7 +56,9 @@ class TestCase extends PHPUnit_TestCase
 
         // Register routes
         $routes = require __DIR__ . '/../app/routes.php';
+        $categoriesRoutes = require __DIR__ . "/../app/routes/categories.php";
         $routes($app);
+        $categoriesRoutes($app);
 
         return $app;
     }

@@ -54,7 +54,7 @@ class DoctrineCategoryRepository implements CategoryRepository
 
     /**
      * @param array{name: string} $data
-     * @return mixed
+     * @return Category
      * @throws ORMException
      * @throws OptimisticLockException
      */

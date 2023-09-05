@@ -14,7 +14,7 @@ interface CategoryRepository
 
     /**
      * @param array{name: string} $data
-     * @return mixed
+     * @return Category
      */
     public function createCategory(array $data): Category;
 

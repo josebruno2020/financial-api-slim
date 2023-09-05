@@ -4,6 +4,8 @@ namespace App\Domain\Movement;
 
 use App\Domain\Category\Category;
 use App\Domain\Enums\MovementTypeEnum;
+use App\Domain\Helper\DateTimeHelper;
+use App\Domain\Helper\JsonSerializeHelper;
 use App\Domain\User\User;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -13,7 +15,7 @@ use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
 
 #[Entity, Table(name: 'movements')]
-class Movement
+class Movement implements \JsonSerializable
 {
     #[Id, Column(type: 'integer'), GeneratedValue(strategy: 'AUTO')]
     private int $id;
@@ -86,9 +88,9 @@ class Movement
         return $this;
     }
 
-    public function getDate(): \DateTime
+    public function getDate(): string
     {
-        return $this->date;
+        return DateTimeHelper::formatDateTime($this->date);
     }
 
     public function setDate(\DateTime $date): self
@@ -106,5 +108,42 @@ class Movement
     {
         $this->obs = $obs;
         return $this;
+    }
+
+    public function getCreatedAt(): string
+    {
+        return DateTimeHelper::formatDateTime($this->createdAt);
+    }
+
+    public function setCreatedAt(): self
+    {
+        $this->createdAt = new \DateTime();
+        return $this;
+    }
+
+    public function getUpdatedAt(): string
+    {
+        return DateTimeHelper::formatDateTime($this->updatedAt);
+    }
+
+    public function setUpdatedAt(): void
+    {
+        $this->updatedAt = new \DateTime();
+    }
+
+    public function getCategory(): Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(Category $category): void
+    {
+        $this->category = $category;
+    }
+
+
+    public function jsonSerialize(): array
+    {
+        return JsonSerializeHelper::toJson(get_object_vars($this));
     }
 }
