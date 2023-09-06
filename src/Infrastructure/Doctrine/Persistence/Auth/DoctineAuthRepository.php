@@ -22,6 +22,8 @@ class DoctineAuthRepository implements AuthRepository
     {
         $user = $this->userRepository->findUserByEmail($email);
         
+        if (!$user) return null;
+
         $auth = $this->passwordRepository->verifyPassword($password, $user->getPassword());
         
         if (!$auth) return null;

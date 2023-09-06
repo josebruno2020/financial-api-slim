@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Application\Middleware\AuthVerifyMiddleware;
 use App\Application\Actions\User\{CreateUserAction,
     DeleteUserAction,
     ListUsersAction,
@@ -32,5 +33,5 @@ return function (App $app) {
         $group->post('', CreateUserAction::class)->add(UserValidationMiddleware::class);
         $group->put('/{id}', UpdateUserAction::class)->add(UserValidationMiddleware::class);
         $group->delete('/{id}', DeleteUserAction::class);
-    });
+    })->add(AuthVerifyMiddleware::class);
 };

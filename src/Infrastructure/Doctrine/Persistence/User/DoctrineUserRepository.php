@@ -92,13 +92,8 @@ class DoctrineUserRepository implements UserRepository
 
     public function findUserByEmail(string $email): ?User
     {
-        $user = $this->em->getRepository(User::class)->findOneBy(['email' => $email]);
-
-        if (!$user) {
-            throw new UserNotFoundException();
-        }
-
         /** @var User $user */
+        $user = $this->em->getRepository(User::class)->findOneBy(['email' => $email]);
         return $user;
     }
 }
