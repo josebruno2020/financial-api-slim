@@ -41,6 +41,9 @@ abstract class Action
             return $this->action();
         } catch (DomainRecordNotFoundException|DomainInvalidArgumentException $e) {
             throw new HttpNotFoundException($this->request, $e->getMessage());
+        } catch (\Exception $e) {
+            var_dump($e);
+            exit();
         }
     }
 

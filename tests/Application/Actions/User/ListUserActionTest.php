@@ -12,6 +12,8 @@ use Tests\TestCase;
 
 class ListUserActionTest extends TestCase
 {
+    use UserActionTestHelper;
+
     public function testAction()
     {
         $app = $this->getAppInstance();
@@ -19,7 +21,7 @@ class ListUserActionTest extends TestCase
         /** @var Container $container */
         $container = $app->getContainer();
 
-        $user = new User(1, 'bill.gates', 'Bill', 'Gates');
+        $user = $this->createMockUser();
 
         $userRepositoryProphecy = $this->prophesize(UserRepository::class);
         $userRepositoryProphecy
@@ -32,7 +34,7 @@ class ListUserActionTest extends TestCase
         $request = $this->createRequest('GET', '/users');
         $response = $app->handle($request);
 
-        $payload = (string) $response->getBody();
+        $payload = (string)$response->getBody();
         $expectedPayload = new ActionPayload(200, [$user]);
         $serializedPayload = json_encode($expectedPayload, JSON_PRETTY_PRINT);
 

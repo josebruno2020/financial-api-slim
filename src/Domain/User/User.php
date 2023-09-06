@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\User;
 
+use App\Domain\Helper\JsonSerializeHelper;
 use App\Domain\Validation\DomainValidationHelper;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -18,21 +19,31 @@ class User implements JsonSerializable
     #[Id, Column(type: 'integer'), GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
+    #[Column(type: 'string', nullable: false)]
+    private string $name;
+
     #[Column(type: 'string', unique: true, nullable: false)]
-    private string $username;
+    private string $email;
 
     #[Column(type: 'string', nullable: false)]
-    private string $firstName;
+    private string $password;
 
-    #[Column(type: 'string', nullable: false)]
-    private string $lastName;
+    private \DateTime $createdAt; //TODO
 
-    public function __construct(?int $id = null, ?string $username = null, ?string $firstName = null, ?string $lastName = null)
+    public function __construct(string $email, string $name, string $password, ?int $id = null)
     {
         $this->setId($id)
-            ->setUsername($username)
-            ->setFirstName($firstName)
-            ->setLastName($lastName);
+            ->setEmail($email)
+            ->setName($name)
+            ->setPassword($password);
+    }
+
+    public function setId(?int $id): User
+    {
+        if ($id) {
+            $this->id = $id;
+        }
+        return $this;
     }
 
     public function getId(): ?int
@@ -40,66 +51,45 @@ class User implements JsonSerializable
         return $this->id;
     }
 
-    public function getUsername(): string
+    public function getName(): string
     {
-        return $this->username;
+        return $this->name;
     }
 
-    public function getFirstName(): string
+    public function setName(string $name): self
     {
-        return $this->firstName;
-    }
-
-    public function getLastName(): string
-    {
-        return $this->lastName;
-    }
-
-    public function setUsername(?string $username): self
-    {
-        DomainValidationHelper::validateRequiredArgument(
-            argument: $username,
-            argumentName: "username"
-        );
-        $this->username = strtolower($username);
+        $this->name = ucfirst($name);
         return $this;
     }
 
-    public function setFirstName(?string $firstName): User
+    public function getEmail(): string
     {
-        DomainValidationHelper::validateRequiredArgument(
-            argument: $firstName,
-            argumentName: "firstName"
-        );
-        $this->firstName = ucfirst($firstName);
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
         return $this;
     }
 
-    public function setLastName(?string $lastName): User
+    public function getPassword(): string
     {
-        DomainValidationHelper::validateRequiredArgument(
-            argument: $lastName,
-            argumentName: "lastName"
-        );
-        $this->lastName = ucfirst($lastName);
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
         return $this;
     }
 
-
-    #[\ReturnTypeWillChange]
     public function jsonSerialize(): array
     {
         return [
             'id' => $this->id,
-            'username' => $this->username,
-            'firstName' => $this->firstName,
-            'lastName' => $this->lastName,
+            'name' => $this->name,
+            'email' => $this->email
         ];
-    }
-
-    public function setId(int $id): User
-    {
-        $this->id = $id;
-        return $this;
     }
 }

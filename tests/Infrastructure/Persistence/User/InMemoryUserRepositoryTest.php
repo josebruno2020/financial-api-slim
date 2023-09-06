@@ -23,11 +23,7 @@ class InMemoryUserRepositoryTest extends TestCase
     public function testFindAllUsersByDefault()
     {
         $users = [
-            1 => new User(1, 'bill.gates', 'Bill', 'Gates'),
-            2 => new User(2, 'steve.jobs', 'Steve', 'Jobs'),
-            3 => new User(3, 'mark.zuckerberg', 'Mark', 'Zuckerberg'),
-            4 => new User(4, 'evan.spiegel', 'Evan', 'Spiegel'),
-            5 => new User(5, 'jack.dorsey', 'Jack', 'Dorsey'),
+            1 => new User('email@teste.com', 'Teste', '123123', 1),
         ];
 
         $userRepository = new InMemoryUserRepository();
@@ -56,9 +52,9 @@ class InMemoryUserRepositoryTest extends TestCase
         $userRepository = new InMemoryUserRepository([]);
 
         $data = [
-            'username' => 'jb',
-            'firstName' => 'josé',
-            'lastName' => 'bruno'
+            'email' => 'email@teste.com',
+            'name' => 'Teste',
+            'password' => '123123'
         ];
 
         $userRepository->createUser($data);
@@ -73,9 +69,8 @@ class InMemoryUserRepositoryTest extends TestCase
 
         $data = [
             'id' => 1,
-            'username' => 'jb',
-            'firstName' => 'José',
-            'lastName' => 'Bruno'
+            'email' => 'email@teste.com',
+            'name' => 'Teste',
         ];
 
         $userRepository->updateUserById(1, $data);
@@ -104,7 +99,7 @@ class InMemoryUserRepositoryTest extends TestCase
 
         $userRepository = new InMemoryUserRepository([1 => $user]);
 
-        $hasUsername = $userRepository->usernameExists('bill.gates', $user->getId());
+        $hasUsername = $userRepository->emailExists('bill.gates', $user->getId());
 
         $this->assertFalse($hasUsername);
     }
@@ -116,13 +111,13 @@ class InMemoryUserRepositoryTest extends TestCase
 
         $userRepository = new InMemoryUserRepository([1 => $user]);
 
-        $hasUsername = $userRepository->usernameExists('bill.gates');
+        $hasUsername = $userRepository->emailExists('bill.gates');
 
         $this->assertTrue($hasUsername);
     }
 
     private function userMock(): User
     {
-        return new User(1, 'bill.gates', 'Bill', 'Gates');
+        return new User('bill.gates', 'Bill', 'Gates', 1);
     }
 }

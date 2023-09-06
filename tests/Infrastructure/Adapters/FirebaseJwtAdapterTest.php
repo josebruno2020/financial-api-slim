@@ -5,10 +5,12 @@ namespace Tests\Infrastructure\Adapters;
 use App\Domain\Auth\InvalidTokenException;
 use App\Domain\User\User;
 use App\Infrastructure\Adapters\FirebaseJwtAdapter;
+use Tests\Application\Actions\User\UserActionTestHelper;
 use Tests\TestCase;
 
 class FirebaseJwtAdapterTest extends TestCase
 {
+    use UserActionTestHelper;
     private function setAdapter(): FirebaseJwtAdapter
     {
         return new FirebaseJwtAdapter();    
@@ -16,7 +18,7 @@ class FirebaseJwtAdapterTest extends TestCase
 
     public function testEncodeToken()
     {
-        $user = new User(id: 1, username: 'jb', firstName: 'José', lastName: 'Bruno');
+        $user = $this->createMockUser();
         $adapter = $this->setAdapter();
         $token = $adapter->encodeToken($user);
         
@@ -26,7 +28,7 @@ class FirebaseJwtAdapterTest extends TestCase
     public function testDecodeToken()
     {
         $adapter = $this->setAdapter();
-        $user = new User(id: 1, username: 'jb', firstName: 'José', lastName: 'Bruno');
+        $user = $this->createMockUser();
         $token = $adapter->encodeToken($user);
         
         

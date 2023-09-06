@@ -19,9 +19,9 @@ class CreateUserActionTest extends TestCase
         $container = $app->getContainer();
 
         $data = [
-            'username' => 'jb',
-            'firstName' => 'José',
-            'lastName' => 'Bruno'
+            'email' => 'jb@email.com',
+            'name' => 'Teste',
+            'password' => '123123'
         ];
 
         $userRepositoryProphecy = $this->prophesize(UserRepository::class);
@@ -31,7 +31,7 @@ class CreateUserActionTest extends TestCase
             ->hasReturnVoid();
 
         $userRepositoryProphecy
-            ->usernameExists($data['username'], id: null)
+            ->emailExists($data['email'], id: null)
             ->shouldBeCalledOnce();
 
         $container->set(UserRepository::class, $userRepositoryProphecy->reveal());

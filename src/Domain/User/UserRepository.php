@@ -19,16 +19,16 @@ interface UserRepository
     public function findUserOfId(int $id): ?User;
 
     /**
-     * @param array{username: string, firstName: string, lastName: string} $data
+     * @param array{email: string, name: string, password: string} $data
      */
     public function createUser(array $data): void;
 
-    public function usernameExists(string $username, ?int $id = null): bool;
+    public function emailExists(string $email, ?int $id = null): bool;
 
 
     /**
      * @param int $id
-     * @param array{username: string, firstName: string, lastName: string} $data
+     * @param array{email: string, name: string} $data
      * @return void
      */
     public function updateUserById(int $id, array $data): void;

@@ -8,7 +8,7 @@ use App\Application\Actions\User\{CreateUserAction,
     UpdateUserAction,
     ViewUserAction
 };
-use App\Application\Middleware\UserCreateValidationMiddleware;
+use App\Application\Middleware\UserValidationMiddleware;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
@@ -29,8 +29,8 @@ return function (App $app) {
     $app->group('/users', function (Group $group) {
         $group->get('', ListUsersAction::class);
         $group->get('/{id}', ViewUserAction::class);
-        $group->post('', CreateUserAction::class)->add(UserCreateValidationMiddleware::class);
-        $group->put('/{id}', UpdateUserAction::class)->add(UserCreateValidationMiddleware::class);
+        $group->post('', CreateUserAction::class)->add(UserValidationMiddleware::class);
+        $group->put('/{id}', UpdateUserAction::class)->add(UserValidationMiddleware::class);
         $group->delete('/{id}', DeleteUserAction::class);
     });
 };

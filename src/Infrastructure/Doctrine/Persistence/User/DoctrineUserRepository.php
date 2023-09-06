@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Doctrine\Persistence\User;
 
+use App\Domain\User\PasswordRepository;
 use App\Domain\User\User;
 use App\Domain\User\UserNotFoundException;
 use App\Domain\User\UserRepository;
@@ -12,10 +13,12 @@ use Doctrine\ORM\OptimisticLockException;
 class DoctrineUserRepository implements UserRepository
 {
     private EntityManager $em;
+    private PasswordRepository $passwordRepository;
 
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManager $em, PasswordRepository $passwordRepository)
     {
         $this->em = $em;
+        $this->passwordRepository = $passwordRepository;
     }
 
     public function findAll(): array
@@ -33,58 +36,44 @@ class DoctrineUserRepository implements UserRepository
     }
 
     /**
-     * @param array{username: string, firstName: string, lastName: string} $data
+     * @param array{email: string, name: string, password: string} $data
      * @throws ORMException
      * @throws OptimisticLockException
      */
     public function createUser(array $data): void
     {
-        $user = new User();
-        $user->setUsername($data['username'])
-            ->setFirstName($data['firstName'])
-            ->setLastName($data['lastName']);
-
+        $password = $this->passwordRepository->setPassword($data['password']);
+        $user = new User(email: $data['email'], name: $data['name'], password: $password);
         $this->em->persist($user);
         $this->em->flush();
     }
 
-    public function usernameExists(string $username, ?int $id = null): bool
+    public function emailExists(string $email, ?int $id = null): bool
     {
         $q = $this->em->getRepository(User::class)->createQueryBuilder('u')
-            ->where('u.username = :username');
+            ->where('u.email = :email');
 
         if ($id) {
             $q = $q->andWhere('u.id <> :id')
             ->setParameter('id', $id);
         }
-        $result = $q->setParameter('username', $username)
+        $result = $q->setParameter('email', $email)
             ->getQuery()->getResult();
-
-//        var_dump($result);
-//
-//        var_dump(count($result));
-//        exit();
-
-
 
         return count($result) > 0;
     }
 
     /**
      * @param int $id
-     * @param array{username: string, firstName: string, lastName: string} $data
+     * @param array{email: string, name: string, password: string} $data
      * @return void
      */
     public function updateUserById(int $id, array $data): void
     {
         $user = $this->findUserOfId($id);
-        if (!$user) {
-            throw new UserNotFoundException();
-        }
         $user
-            ->setUsername($data['username'])
-            ->setFirstName($data['firstName'])
-            ->setLastName($data['lastName']);
+            ->setEmail($data['email'])
+            ->setName($data['name']);
 
         $this->em->persist($user);
         $this->em->flush();

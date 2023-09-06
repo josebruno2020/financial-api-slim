@@ -12,6 +12,8 @@ use Tests\TestCase;
 
 class DeleteUserActionTest extends TestCase
 {
+    use UserActionTestHelper;
+
     public function testAction()
     {
         $app = $this->getAppInstance();
@@ -19,7 +21,7 @@ class DeleteUserActionTest extends TestCase
         /** @var Container $container */
         $container = $app->getContainer();
 
-        $user = new User(1, 'bill.gates', 'Bill', 'Gates');
+        $user = $this->createMockUser();
 
         $userRepositoryProphecy = $this->prophesize(UserRepository::class);
         $userRepositoryProphecy

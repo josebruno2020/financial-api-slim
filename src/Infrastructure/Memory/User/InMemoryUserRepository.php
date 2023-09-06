@@ -21,11 +21,7 @@ class InMemoryUserRepository implements UserRepository
     public function __construct(array $users = null)
     {
         $this->users = $users ?? [
-            1 => new User(1, 'bill.gates', 'Bill', 'Gates'),
-            2 => new User(2, 'steve.jobs', 'Steve', 'Jobs'),
-            3 => new User(3, 'mark.zuckerberg', 'Mark', 'Zuckerberg'),
-            4 => new User(4, 'evan.spiegel', 'Evan', 'Spiegel'),
-            5 => new User(5, 'jack.dorsey', 'Jack', 'Dorsey'),
+            1 => new User('email@teste.com', 'Teste', '123123', 1),
         ];
     }
 
@@ -50,7 +46,7 @@ class InMemoryUserRepository implements UserRepository
     }
 
     /**
-     * @param array{username: string, firstName: string, lastName: string} $data
+     * @param array{email: string, name: string, password: string} $data
      */
     public function createUser(array $data): void
     {
@@ -63,18 +59,18 @@ class InMemoryUserRepository implements UserRepository
         $this->users[] = [
             $userId => new User(
                 id: $userId,
-                username: $data['username'],
-                firstName: $data['firstName'],
-                lastName: $data['lastName']
+                email: $data['email'],
+                name: $data['name'],
+                password: $data['password']
             )
         ];
     }
 
-    public function usernameExists(string $username, ?int $id = null): bool
+    public function emailExists(string $email, ?int $id = null): bool
     {
         $result = false;
         foreach ($this->users as $user) {
-            if ($user->getId() !== $id && $user->getUsername() === $username) {
+            if ($user->getId() !== $id && $user->getEmail() === $email) {
                 $result = true;
             }
         }
@@ -83,7 +79,7 @@ class InMemoryUserRepository implements UserRepository
 
     /**
      * @param int $id
-     * @param array{username: string, firstName: string, lastName: string} $data
+     * @param array{email: string, name: string} $data
      * @return void
      * @throws UserNotFoundException
      */
@@ -94,9 +90,8 @@ class InMemoryUserRepository implements UserRepository
             throw new UserNotFoundException();
         }
 
-        $user->setUsername($data['username'])
-            ->setFirstName($data['firstName'])
-            ->setLastName($data['lastName']);
+        $user->setName($data['name'])
+            ->setEmail($data['email']);
     }
 
     public function deleteUserById(int $id): void

@@ -12,7 +12,7 @@ class CreateUserAction extends UserAction
     protected function action(): Response
     {
         $this->userRepository->createUser(
-            data: $this->request->getParsedBody()
+            data: $this->getBody()
         );
 
         return $this->respondWithData(statusCode: 201);

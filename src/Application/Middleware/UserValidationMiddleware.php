@@ -12,7 +12,7 @@ use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Routing\RouteContext;
 
-class UserCreateValidationMiddleware implements Middleware
+class UserValidationMiddleware implements Middleware
 {
     private UserRepository $repository;
     private DomainValidationHelper $validationHelper;
@@ -29,7 +29,7 @@ class UserCreateValidationMiddleware implements Middleware
     public function process(Request $request, RequestHandler $handler): Response
     {
         $body = $request->getParsedBody() ?? [];
-        $fields = ['username', 'firstName', 'lastName'];
+        $fields = ['email', 'name', 'password'];
         try {
             $this->validationHelper->validateRequiredArguments($fields, $body);
         } catch (DomainInvalidArgumentException $e) {
@@ -38,11 +38,10 @@ class UserCreateValidationMiddleware implements Middleware
         
         $id = $this->getPathParam($request, param: 'id');
 
-        if($this->repository->usernameExists($body['username'], $id)) {
-            throw new HttpBadRequestException($request, "Campo [username] deve ser único.");
+        if($this->repository->emailExists($body['email'], $id)) {
+            throw new HttpBadRequestException($request, "Campo [email] deve ser único.");
         }
         
-
         return $handler->handle($request);
     }
     
