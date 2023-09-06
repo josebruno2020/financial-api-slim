@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Domain\User;
 
+use App\Domain\Helper\DateTimeHelper;
 use App\Domain\User\User;
 use Tests\TestCase;
 
@@ -27,11 +28,13 @@ class UserTest extends TestCase
     public function testGetters(string $email, string $name, string $password, int $id)
     {
         $user = new User($email, $name, $password, $id);
+        $now = new \DateTime();
 
         $this->assertEquals($id, $user->getId());
         $this->assertEquals($email, $user->getEmail());
         $this->assertEquals($name, $user->getName());
         $this->assertEquals($password, $user->getPassword());
+        $this->assertEquals(DateTimeHelper::formatDateTime($now), $user->getCreatedAt());
     }
 
     /**
@@ -44,11 +47,13 @@ class UserTest extends TestCase
     public function testJsonSerialize(string $email, string $name, string $password, int $id)
     {
         $user = new User($email, $name, $password, $id);
+        $now = new \DateTime();
 
         $expectedPayload = json_encode([
             'id' => $id,
             'name' => $name,
-            'email' => $email
+            'email' => $email,
+            'createdAt' => DateTimeHelper::formatDateTime($now)
         ]);
 
         $this->assertEquals($expectedPayload, json_encode($user));

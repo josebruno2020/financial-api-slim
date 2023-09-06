@@ -76,6 +76,7 @@ class InMemoryUserRepositoryTest extends TestCase
         $userRepository->updateUserById(1, $data);
 
         $userUpdated = $userRepository->findUserOfId(1);
+        unset($userUpdated['createdAt']);
 
         $this->assertEquals(
             $data,

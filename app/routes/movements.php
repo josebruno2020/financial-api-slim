@@ -18,7 +18,5 @@ return function (App $app) {
         $group->get('/{id}', ViewAction::class);
         $group->post('', CreateAction::class)->add(MovementValidationMiddleware::class);
         $group->delete('/{id}', DeleteAction::class);
-
-
     });
 };

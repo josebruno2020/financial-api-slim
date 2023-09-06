@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Actions;
 
+use App\Domain\Auth\AuthUnauthorizedException;
+use App\Domain\Auth\InvalidTokenException;
 use App\Domain\DomainException\DomainInvalidArgumentException;
 use App\Domain\DomainException\DomainRecordNotFoundException;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -11,6 +13,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpNotFoundException;
+use Slim\Exception\HttpUnauthorizedException;
 
 abstract class Action
 {
@@ -30,6 +33,7 @@ abstract class Action
     /**
      * @throws HttpNotFoundException
      * @throws HttpBadRequestException
+     * @throws HttpUnauthorizedException
      */
     public function __invoke(Request $request, Response $response, array $args): Response
     {
@@ -41,9 +45,8 @@ abstract class Action
             return $this->action();
         } catch (DomainRecordNotFoundException|DomainInvalidArgumentException $e) {
             throw new HttpNotFoundException($this->request, $e->getMessage());
-        } catch (\Exception $e) {
-            var_dump($e);
-            exit();
+        } catch (AuthUnauthorizedException|InvalidTokenException $e) {
+            throw new HttpUnauthorizedException($this->request, $e->getMessage());
         }
     }
 

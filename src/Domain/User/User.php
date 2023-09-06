@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\User;
 
+use App\Domain\Helper\DateTimeHelper;
 use App\Domain\Helper\JsonSerializeHelper;
 use App\Domain\Validation\DomainValidationHelper;
 use Doctrine\ORM\Mapping\Column;
@@ -28,14 +29,16 @@ class User implements JsonSerializable
     #[Column(type: 'string', nullable: false)]
     private string $password;
 
-    private \DateTime $createdAt; //TODO
+    #[Column(name: 'created_at', type: 'datetime', nullable: true, options: ['defaut' => 'CURRENT_TIMESTAMP'])]
+    private \DateTime $createdAt;
 
     public function __construct(string $email, string $name, string $password, ?int $id = null)
     {
         $this->setId($id)
             ->setEmail($email)
             ->setName($name)
-            ->setPassword($password);
+            ->setPassword($password)
+            ->setCreatedAt();
     }
 
     public function setId(?int $id): User
@@ -84,12 +87,24 @@ class User implements JsonSerializable
         return $this;
     }
 
+    public function getCreatedAt(): string
+    {
+        return DateTimeHelper::formatDateTime($this->createdAt);
+    }
+
+    public function setCreatedAt(): self
+    {
+        $this->createdAt = new \DateTime();
+        return $this;
+    }
+
     public function jsonSerialize(): array
     {
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'email' => $this->email
+            'email' => $this->email,
+            'createdAt' => $this->getCreatedAt()
         ];
     }
 }
