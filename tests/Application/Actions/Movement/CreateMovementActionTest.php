@@ -12,7 +12,7 @@ use App\Domain\Movement\MovementRepository;
 use DI\Container;
 use Tests\TestCase;
 
-class ListCurrentMonthMovementActionTest extends TestCase
+class CreateMovementActionTest extends TestCase
 {
     use MovementActionTestHelper;
 
@@ -25,19 +25,22 @@ class ListCurrentMonthMovementActionTest extends TestCase
 
         $movement = $this->createMockMovement();
 
+        $data = ['type' => 0, 'value' => 50.0, 'obs' => 'Legal', 'category_id' => 1];
+
         $movementRepositoryProphecy = $this->prophesize(MovementRepository::class);
         $movementRepositoryProphecy
-            ->findAllInCurrentMonth()
-            ->willReturn([$movement])
+            ->createMovement($data)
+            ->willReturn($movement)
             ->shouldBeCalledOnce();
 
         $container->set(MovementRepository::class, $movementRepositoryProphecy->reveal());
+        $container->set(MovementRepository::class, $movementRepositoryProphecy->reveal());
 
-        $request = $this->createRequest('GET', '/movements/current-month');
+        $request = $this->createRequest('POST', '/movements')->withParsedBody($data);
         $response = $app->handle($request);
 
         $payload = (string)$response->getBody();
-        $expectedPayload = new ActionPayload(200, [$movement]);
+        $expectedPayload = new ActionPayload(201, $movement);
         $serializedPayload = json_encode($expectedPayload, JSON_PRETTY_PRINT);
 
         $this->assertEquals($serializedPayload, $payload);

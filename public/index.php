@@ -14,13 +14,13 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 // Instantiate PHP-DI ContainerBuilder
 $containerBuilder = new ContainerBuilder();
+$settings = require __DIR__ . '/../app/settings.php';
 
-if (false) { // Should be set to true in production
+if (($_ENV['APP_ENV'] == 'local')) { // Should be set to true in production
 	$containerBuilder->enableCompilation(__DIR__ . '/../var/cache');
 }
 
 // Set up settings
-$settings = require __DIR__ . '/../app/settings.php';
 $settings($containerBuilder);
 
 // Set up dependencies

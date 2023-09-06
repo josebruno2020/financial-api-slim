@@ -3,20 +3,25 @@
 namespace App\Infrastructure\Doctrine\Persistence\Movement;
 
 use App\Domain\Category\Category;
+use App\Domain\Category\CategoryRepository;
 use App\Domain\Enums\MovementTypeEnum;
 use App\Domain\Movement\Movement;
 use App\Domain\Movement\MovementNotFoundException;
 use App\Domain\Movement\MovementRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\Query\Parameter;
 
 class DoctrineMovementRepository implements MovementRepository
 {
     private EntityManager $entityManager;
+    private CategoryRepository $categoryRepository;
 
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager, CategoryRepository $categoryRepository)
     {
         $this->entityManager = $entityManager;
+        $this->categoryRepository = $categoryRepository;
     }
 
 
@@ -86,5 +91,36 @@ class DoctrineMovementRepository implements MovementRepository
          * @var Movement $movement
          */
         return $movement;
+    }
+
+    /**
+     * @return array<string, float>
+     */
+    public function findTotalByTypeAndCategoryInMonth(string $month, MovementTypeEnum $type): array
+    {
+        $result = [];
+        $allCategories = $this->categoryRepository->listCategories('asc');
+        $repo = $this->setRepository();
+        $q = $repo->createQueryBuilder('m');
+        foreach ($allCategories as $category) {
+            $resultQuery = $q->select('sum(m.value) as total')
+                ->join('m.category', 'c')
+                ->where('m.date LIKE :month')
+                ->andWhere('c.id = :category_id')
+                ->andWhere('m.type = :type')
+                ->setParameter('month', "$month%")
+                ->setParameter('category_id', $category->getId())
+                ->setParameter('type', $type->value)
+                ->getQuery()
+                ->getResult();
+
+            $total = $resultQuery[0]['total'] ?? 0;
+
+            $result[] = [$category->getName() => $total];
+        }
+
+
+        return $result;
+
     }
 }

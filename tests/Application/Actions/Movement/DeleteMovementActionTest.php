@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace Tests\Application\Actions\Movement;
 
 use App\Application\Actions\ActionPayload;
-use App\Domain\Category\Category;
-use App\Domain\Category\CategoryRepository;
-use App\Domain\Movement\Movement;
 use App\Domain\Movement\MovementRepository;
 use DI\Container;
 use Tests\TestCase;
 
-class ListCurrentMonthMovementActionTest extends TestCase
+class DeleteMovementActionTest extends TestCase
 {
     use MovementActionTestHelper;
 
@@ -27,17 +24,17 @@ class ListCurrentMonthMovementActionTest extends TestCase
 
         $movementRepositoryProphecy = $this->prophesize(MovementRepository::class);
         $movementRepositoryProphecy
-            ->findAllInCurrentMonth()
-            ->willReturn([$movement])
-            ->shouldBeCalledOnce();
+            ->deleteMovementById($movement->getId())
+            ->shouldBeCalledOnce()
+            ->hasReturnVoid();
 
         $container->set(MovementRepository::class, $movementRepositoryProphecy->reveal());
 
-        $request = $this->createRequest('GET', '/movements/current-month');
+        $request = $this->createRequest('DELETE', "/movements/{$movement->getId()}");
         $response = $app->handle($request);
 
         $payload = (string)$response->getBody();
-        $expectedPayload = new ActionPayload(200, [$movement]);
+        $expectedPayload = new ActionPayload(204);
         $serializedPayload = json_encode($expectedPayload, JSON_PRETTY_PRINT);
 
         $this->assertEquals($serializedPayload, $payload);

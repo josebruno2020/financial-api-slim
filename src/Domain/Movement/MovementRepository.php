@@ -2,6 +2,9 @@
 
 namespace App\Domain\Movement;
 
+use App\Domain\Enums\MovementTypeEnum;
+use JetBrains\PhpStorm\ArrayShape;
+
 interface MovementRepository
 {
     /**
@@ -23,4 +26,10 @@ interface MovementRepository
     public function createMovement(array $data): Movement;
 
     public function deleteMovementById(int $id): void;
+
+
+    /**
+     * @return array<string, float>
+     */
+    public function findTotalByTypeAndCategoryInMonth(string $month, MovementTypeEnum $type): array;
 }

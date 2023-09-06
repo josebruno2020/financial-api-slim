@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace Tests\Application\Actions\Movement;
 
 use App\Application\Actions\ActionPayload;
-use App\Domain\Category\Category;
-use App\Domain\Category\CategoryRepository;
-use App\Domain\Movement\Movement;
 use App\Domain\Movement\MovementRepository;
 use DI\Container;
 use Tests\TestCase;
 
-class ListCurrentMonthMovementActionTest extends TestCase
+class ListAllMovementsActionTest extends TestCase
 {
     use MovementActionTestHelper;
 
@@ -27,13 +24,13 @@ class ListCurrentMonthMovementActionTest extends TestCase
 
         $movementRepositoryProphecy = $this->prophesize(MovementRepository::class);
         $movementRepositoryProphecy
-            ->findAllInCurrentMonth()
+            ->findAll()
             ->willReturn([$movement])
             ->shouldBeCalledOnce();
 
         $container->set(MovementRepository::class, $movementRepositoryProphecy->reveal());
 
-        $request = $this->createRequest('GET', '/movements/current-month');
+        $request = $this->createRequest('GET', '/movements');
         $response = $app->handle($request);
 
         $payload = (string)$response->getBody();

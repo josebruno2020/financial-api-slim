@@ -22,7 +22,7 @@ return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
         SettingsInterface::class => function () {
             return new Settings([
-                'displayErrorDetails' => true, // Should be set to false in production
+                'displayErrorDetails' => ($_ENV['APP_ENV'] == 'local'),
                 'logError'            => false,
                 'logErrorDetails'     => false,
                 'logger' => [
@@ -33,7 +33,7 @@ return function (ContainerBuilder $containerBuilder) {
                 'doctrine' => [
                     // Enables or disables Doctrine metadata caching
                     // for either performance or convenience during development.
-                    'dev_mode' => true,
+                    'dev_mode' => ($_ENV['APP_ENV'] == 'local'),
 
                     // Path where Doctrine will cache the processed metadata
                     // when 'dev_mode' is false.
