@@ -29,11 +29,6 @@ class ViewTotalByCategoryAndTypeInMonthActionTest extends TestCase
             ['Categoria 1' => 52.1]
         ];
 
-        
-
-        $month = date('Y-m');
-        $typeEnum = MovementTypeEnum::make($type);
-
         $movementRepositoryProphecy = $this->prophesize(MovementRepository::class);
         $movementRepositoryProphecy
             ->findTotalByTypeAndCategoryInMonth(Argument::type('string'), Argument::type(MovementTypeEnum::class))

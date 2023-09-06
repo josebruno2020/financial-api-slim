@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Domain\Auth\TokenRepository;
 use App\Domain\User\UserValidationHelper;
 use App\Domain\User\Validation\UserCreateValidation;
 use App\Domain\Validation\DomainValidationHelper;
+use App\Infrastructure\Adapters\FirebaseJwtAdapter;
 use Monolog\Logger;
 use DI\ContainerBuilder;
 use Psr\Log\LoggerInterface;
@@ -32,8 +34,10 @@ return function (ContainerBuilder $containerBuilder) {
             return $logger;
         },
 
-        EntityManager::class => fn (ContainerInterface $c) => EntityManagerDto::make($c->get(SettingsInterface::class)->get('doctrine')),
+        EntityManager::class => fn(ContainerInterface $c) => EntityManagerDto::make($c->get(SettingsInterface::class)->get('doctrine')),
 
         DomainValidationHelper::class => \DI\autowire(DomainValidationHelper::class),
+
+        TokenRepository::class => \DI\autowire(FirebaseJwtAdapter::class)
     ]);
 };
