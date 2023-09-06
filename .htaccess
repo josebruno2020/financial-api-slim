@@ -18,6 +18,4 @@ deny from all
   # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 </IfModule>
 
-<IfModule mime_module>
-  AddHandler application/x-httpd-ea-php82 .php .php8 .phtml
-</IfModule>
+AddHandler application/x-httpd-ea-php82 .php .php8 .phtml
