@@ -8,6 +8,7 @@ use App\Domain\Enums\MovementTypeEnum;
 use App\Domain\Movement\Movement;
 use App\Domain\Movement\MovementNotFoundException;
 use App\Domain\Movement\MovementRepository;
+use App\Domain\PaymentForm\PaymentForm;
 use App\Domain\User\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -53,7 +54,7 @@ readonly class DoctrineMovementRepository implements MovementRepository
     }
 
     /**
-     * @param array{user_id: int, category_id: int, value: float, date: ?string, type: int, userId: int, obs: ?string} $data
+     * @param array{user_id: int, category_id: int, value: float, payment_form_id: int, date: ?string, type: int, userId: int, obs: ?string} $data
      * @return Movement
      */
     public function createMovement(array $data): Movement
@@ -62,6 +63,7 @@ readonly class DoctrineMovementRepository implements MovementRepository
             category: $this->entityManager->getReference(Category::class, $data['category_id']),
             type: $data['type'],
             value: $data['value'],
+            paymentForm: $this->entityManager->getReference(PaymentForm::class, $data['payment_form_id']),
             date: $data['date'] ?? null,
             user: $this->entityManager->getReference(User::class, $data['userId']),
             obs: $data['obs'] ?? null

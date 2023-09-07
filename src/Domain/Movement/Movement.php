@@ -7,6 +7,7 @@ use App\Domain\Enums\MovementStatusEnum;
 use App\Domain\Enums\MovementTypeEnum;
 use App\Domain\Helper\DateTimeHelper;
 use App\Domain\Helper\JsonSerializeHelper;
+use App\Domain\PaymentForm\PaymentForm;
 use App\Domain\User\User;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -45,18 +46,32 @@ class Movement implements \JsonSerializable
     #[Column(type: 'string', nullable: false, enumType: MovementStatusEnum::class, options: ['default' => MovementStatusEnum::PAID])]
     private MovementStatusEnum $status;
 
+    #[ManyToOne(targetEntity: Category::class)]
+    #[JoinColumn(name: 'payment_form_id', referencedColumnName: 'id')]
+    private PaymentForm $paymentForm;
+
     #[Column(name: 'created_at', type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
     private \DateTime $createdAt;
 
     #[Column(name: 'updated_at', type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
     private \DateTime $updatedAt;
 
-    public function __construct(Category $category, int $type, float $value, ?string $date = null, ?User $user = null, ?string $obs = null, ?int $id = null)
+    public function __construct(
+        Category    $category,
+        int         $type,
+        float       $value,
+        PaymentForm $paymentForm,
+        ?string     $date = null,
+        ?User       $user = null,
+        ?string     $obs = null,
+        ?int        $id = null
+    )
     {
         $this->setCategory($category)
             ->setType($type)
             ->setDate($date)
             ->setValue($value)
+            ->setPaymentForm($paymentForm)
             ->setObs($obs)
             ->setId($id)
             ->setUser($user)
@@ -187,9 +202,19 @@ class Movement implements \JsonSerializable
         return $this;
     }
 
+    public function getPaymentForm(): PaymentForm
+    {
+        return $this->paymentForm;
+    }
+
+    public function setPaymentForm(PaymentForm $paymentForm): self
+    {
+        $this->paymentForm = $paymentForm;
+        return $this;
+    }
+
     public function jsonSerialize(): array
     {
         return JsonSerializeHelper::toJson(get_object_vars($this));
     }
-
 }

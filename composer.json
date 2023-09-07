@@ -35,6 +35,7 @@
         "vlucas/phpdotenv": "^5.5"
     },
     "require-dev": {
+        "doctrine/data-fixtures": "^1.6",
         "jangregor/phpstan-prophecy": "^1.0.0",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/extension-installer": "^1.2.0",
@@ -64,6 +65,7 @@
         "test": "php vendor/bin/phpunit --testdox --coverage-clover clover.xml",
         "analyze": "php vendor/bin/phpstan",
         "doctrine": "php vendor/bin/doctrine",
-        "migrations": "php vendor/bin/doctrine-migrations"
+        "migrations": "php vendor/bin/doctrine-migrations",
+        "seed": "php fixtures.php"
     }
 }

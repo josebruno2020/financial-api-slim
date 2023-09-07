@@ -21,7 +21,7 @@ class MovementValidationMiddleware implements Middleware
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $requiredFields = ['category_id', 'value', 'type'];
+        $requiredFields = ['category_id', 'value', 'type', 'payment_form_id'];
         $body = $request->getParsedBody() ?? [];
 
         try {
