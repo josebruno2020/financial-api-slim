@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Domain\User;
 
+use App\Domain\Enums\UserStatusEnum;
 use App\Domain\Helper\DateTimeHelper;
 use App\Domain\User\User;
 use Tests\TestCase;
@@ -34,6 +35,7 @@ class UserTest extends TestCase
         $this->assertEquals($email, $user->getEmail());
         $this->assertEquals($name, $user->getName());
         $this->assertEquals($password, $user->getPassword());
+        $this->assertEquals(UserStatusEnum::ACTIVE, $user->getStatus());
         $this->assertEquals(DateTimeHelper::formatDateTime($now), $user->getCreatedAt());
     }
 
@@ -53,6 +55,7 @@ class UserTest extends TestCase
             'id' => $id,
             'name' => $name,
             'email' => $email,
+            'status' => UserStatusEnum::ACTIVE->value,
             'createdAt' => DateTimeHelper::formatDateTime($now)
         ]);
 

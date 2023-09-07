@@ -45,6 +45,7 @@ class CategoryTest extends TestCase
         $expectedPayload = json_encode([
             'id' => $id,
             'name' => $name,
+            'user' => null,
             'createdAt' => $createdAt->format('Y-m-d H:i:s')
         ]);
 

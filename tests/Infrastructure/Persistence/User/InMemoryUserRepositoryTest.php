@@ -76,11 +76,12 @@ class InMemoryUserRepositoryTest extends TestCase
         $userRepository->updateUserById(1, $data);
 
         $userUpdated = $userRepository->findUserOfId(1);
-        unset($userUpdated['createdAt']);
+        $userAsArray = $userUpdated->jsonSerialize();
+        unset($userAsArray['createdAt']);
 
         $this->assertEquals(
             $data,
-            $userUpdated->jsonSerialize()
+            $userAsArray
         );
     }
 

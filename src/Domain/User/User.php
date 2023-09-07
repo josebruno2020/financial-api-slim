@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\User;
 
+use App\Domain\Enums\UserStatusEnum;
 use App\Domain\Helper\DateTimeHelper;
 use App\Domain\Helper\JsonSerializeHelper;
-use App\Domain\Validation\DomainValidationHelper;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -29,6 +29,9 @@ class User implements JsonSerializable
     #[Column(type: 'string', nullable: false)]
     private string $password;
 
+    #[Column(type: 'string', nullable: false, enumType: UserStatusEnum::class, options: ['default' => UserStatusEnum::ACTIVE->value])]
+    private UserStatusEnum $status;
+
     #[Column(name: 'created_at', type: 'datetime', nullable: true, options: ['defaut' => 'CURRENT_TIMESTAMP'])]
     private \DateTime $createdAt;
 
@@ -38,6 +41,7 @@ class User implements JsonSerializable
             ->setEmail($email)
             ->setName($name)
             ->setPassword($password)
+            ->setStatus(UserStatusEnum::ACTIVE)
             ->setCreatedAt();
     }
 
@@ -98,13 +102,21 @@ class User implements JsonSerializable
         return $this;
     }
 
+    public function getStatus(): UserStatusEnum
+    {
+        return $this->status;
+    }
+
+    public function setStatus(UserStatusEnum $status): self
+    {
+        $this->status = $status;
+        return $this;
+    }
+
     public function jsonSerialize(): array
     {
-        return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'email' => $this->email,
-            'createdAt' => $this->getCreatedAt()
-        ];
+        $values = get_object_vars($this);
+        unset($values['password']);
+        return JsonSerializeHelper::toJson($values);
     }
 }

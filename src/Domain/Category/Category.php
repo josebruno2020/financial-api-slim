@@ -6,10 +6,13 @@ namespace App\Domain\Category;
 
 use App\Domain\Helper\DateTimeHelper;
 use App\Domain\Helper\JsonSerializeHelper;
+use App\Domain\User\User;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 use JsonSerializable;
 
@@ -22,13 +25,18 @@ class Category implements JsonSerializable
     #[Column(type: 'string', nullable: false)]
     private string $name;
 
+    #[ManyToOne(targetEntity: User::class)]
+    #[JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    private ?User $user;
+
     #[Column(name: 'created_at', type: 'datetime', nullable: true, options: ['defaut' => 'CURRENT_TIMESTAMP'])]
     private ?\DateTime $createdAt;
 
-    public function __construct(?int $id = null, ?string $name = null)
+    public function __construct(?int $id = null, ?string $name = null, ?User $user = null)
     {
         $this->setId($id)
             ->setName($name)
+            ->setUser($user)
             ->setCreatedAt();
     }
 
@@ -62,6 +70,17 @@ class Category implements JsonSerializable
     public function setCreatedAt(): self
     {
         $this->createdAt = new \DateTime();
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
         return $this;
     }
 

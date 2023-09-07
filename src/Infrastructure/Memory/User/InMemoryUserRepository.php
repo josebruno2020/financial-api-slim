@@ -58,10 +58,10 @@ class InMemoryUserRepository implements UserRepository
         }
         $this->users[] = [
             $userId => new User(
-                id: $userId,
                 email: $data['email'],
                 name: $data['name'],
-                password: $data['password']
+                password: $data['password'],
+                id: $userId
             )
         ];
     }
@@ -98,5 +98,17 @@ class InMemoryUserRepository implements UserRepository
     {
         $user = $this->findUserOfId($id);
         unset($this->users[$user->getId()]);
+    }
+
+    public function findUserByEmail(string $email): ?User
+    {
+        $result = null;
+        foreach ($this->users as $user) {
+            if ($user->getEmail() === $email) {
+                $result = $user;
+            }
+        }
+
+        return $result;
     }
 }

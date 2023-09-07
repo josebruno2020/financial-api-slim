@@ -3,8 +3,10 @@
 namespace App\Infrastructure\Doctrine\Persistence\Category;
 
 use App\Domain\Category\Category;
+use App\Domain\Category\CategoryDeleteNotAllowedException;
 use App\Domain\Category\CategoryNotFoundException;
 use App\Domain\Category\CategoryRepository;
+use App\Domain\User\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Exception\ORMException;
@@ -27,10 +29,13 @@ class DoctrineCategoryRepository implements CategoryRepository
     /**
      * @return Category[]
      */
-    public function listCategories(string $order = 'asc' | 'desc'): array
+    public function listCategories(int $userId, string $order = 'asc' | 'desc'): array
     {
         $repo = $this->setRepository();
-        $q = $repo->createQueryBuilder('c');
+        $q = $repo->createQueryBuilder('c')
+        ->where('c.user = :user_id')
+        ->orWhere('c.user IS NULL')
+        ->setParameter('user_id', $userId);
         //TODO: add order by
         return $q->getQuery()->getResult();
     }
@@ -53,14 +58,14 @@ class DoctrineCategoryRepository implements CategoryRepository
     }
 
     /**
-     * @param array{name: string} $data
+     * @param array{name: string, userId: ?int} $data
      * @return Category
      * @throws ORMException
      * @throws OptimisticLockException
      */
     public function createCategory(array $data): Category
     {
-        $category = new Category(name: $data['name']);
+        $category = new Category(name: $data['name'], user: $this->entityManager->getReference(User::class, $data['userId']));
         $this->entityManager->persist($category);
         $this->entityManager->flush();
         
@@ -83,6 +88,11 @@ class DoctrineCategoryRepository implements CategoryRepository
     public function deleteById(int $id): void
     {
         $category = $this->findCategoryById($id);
+
+        if (is_null($category->getUser())) {
+            throw new CategoryDeleteNotAllowedException();
+        }
+
         $this->entityManager->remove($category);
         $this->entityManager->flush();
     }    
