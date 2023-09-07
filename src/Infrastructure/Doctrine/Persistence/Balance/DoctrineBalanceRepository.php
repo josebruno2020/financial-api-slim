@@ -50,7 +50,8 @@ class DoctrineBalanceRepository implements BalanceRepository
             $currentValue -= $newValue;
         }
         
-        $balance->setBalance($currentValue);
+        $balance->setBalance($currentValue)
+            ->setUpdatedAt();
         $this->entityManager->persist($balance);
         $this->entityManager->flush();
     }

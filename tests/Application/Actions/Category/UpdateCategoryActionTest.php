@@ -12,6 +12,8 @@ use Tests\TestCase;
 
 class UpdateCategoryActionTest extends TestCase
 {
+    use CategoryActionTestHelper;
+
     public function testAction()
     {
         $app = $this->getAppInstance();
@@ -20,7 +22,7 @@ class UpdateCategoryActionTest extends TestCase
         $container = $app->getContainer();
 
         $data = ['name' => 'Categoria Atualizada'];
-        $category = new Category(id: 1, name: 'Categoria Atualizada');
+        $category = $this->createCategoryMock();
 
         $categoryRepositoryProphecy = $this->prophesize(CategoryRepository::class);
         $categoryRepositoryProphecy
@@ -33,7 +35,7 @@ class UpdateCategoryActionTest extends TestCase
         $request = $this->createRequest('PUT', "/categories/{$category->getId()}")->withParsedBody($data);
         $response = $app->handle($request);
 
-        $payload = (string) $response->getBody();
+        $payload = (string)$response->getBody();
         $expectedPayload = new ActionPayload(204);
         $serializedPayload = json_encode($expectedPayload, JSON_PRETTY_PRINT);
 

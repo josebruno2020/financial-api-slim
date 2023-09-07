@@ -22,7 +22,6 @@ readonly class DoctrineMovementRepository implements MovementRepository
     {
     }
 
-
     private function setRepository(): EntityRepository
     {
         return $this->entityManager->getRepository(Movement::class);

@@ -12,6 +12,8 @@ use Tests\TestCase;
 
 class CreateCategoryActionTest extends TestCase
 {
+    use CategoryActionTestHelper;
+
     public function testAction()
     {
         $app = $this->getAppInstance();
@@ -20,7 +22,7 @@ class CreateCategoryActionTest extends TestCase
         $container = $app->getContainer();
 
         $data = ['name' => 'Categoria 1'];
-        $category = new Category(id: 1, name: 'Categoria 1');
+        $category = $this->createCategoryMock();
 
         $categoryRepositoryProphecy = $this->prophesize(CategoryRepository::class);
         $categoryRepositoryProphecy
@@ -33,7 +35,7 @@ class CreateCategoryActionTest extends TestCase
         $request = $this->createRequest('POST', '/categories')->withParsedBody($data);
         $response = $app->handle($request);
 
-        $payload = (string) $response->getBody();
+        $payload = (string)$response->getBody();
         $expectedPayload = new ActionPayload(201, $category);
         $serializedPayload = json_encode($expectedPayload, JSON_PRETTY_PRINT);
 

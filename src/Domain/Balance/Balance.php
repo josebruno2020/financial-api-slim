@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Balance;
 
+use App\Domain\Helper\DateTimeHelper;
 use App\Domain\Helper\JsonSerializeHelper;
 use App\Domain\User\User;
 use Doctrine\ORM\Mapping\Column;
@@ -67,5 +68,16 @@ class Balance implements \JsonSerializable
     public function getBalance(): float
     {
         return $this->balance;
+    }
+
+    public function getCreatedAt(): string
+    {
+        return DateTimeHelper::formatDateTime($this->createdAt);
+    }
+
+    public function setUpdatedAt(): Balance
+    {
+        $this->updatedAt = new \DateTime();
+        return $this;
     }
 }

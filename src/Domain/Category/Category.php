@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Category;
 
+use App\Domain\Enums\MovementTypeEnum;
 use App\Domain\Helper\DateTimeHelper;
 use App\Domain\Helper\JsonSerializeHelper;
 use App\Domain\User\User;
@@ -22,22 +23,24 @@ class Category implements JsonSerializable
     #[Id, Column(type: 'integer'), GeneratedValue(strategy: 'AUTO')]
     private ?int $id;
 
-    #[Column(type: 'string', nullable: false)]
-    private string $name;
+    public function __construct(
+        #[Column(type: 'string', nullable: false)]
+        private string              $name,
 
-    #[ManyToOne(targetEntity: User::class)]
-    #[JoinColumn(name: 'user_id', referencedColumnName: 'id')]
-    private ?User $user;
+        #[ManyToOne(targetEntity: User::class)]
+        #[JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+        private readonly ?User      $user = null,
 
-    #[Column(name: 'created_at', type: 'datetime', nullable: true, options: ['defaut' => 'CURRENT_TIMESTAMP'])]
-    private ?\DateTime $createdAt;
+        #[Column(type: 'integer', nullable: false, enumType: MovementTypeEnum::class, options: ['default' => MovementTypeEnum::OUTFLOW])]
+        private MovementTypeEnum $type = MovementTypeEnum::OUTFLOW,
 
-    public function __construct(?int $id = null, ?string $name = null, ?User $user = null)
+        #[Column(name: 'created_at', type: 'datetime', nullable: true, options: ['defaut' => 'CURRENT_TIMESTAMP'])]
+        private readonly ?\DateTime $createdAt = new \DateTime(),
+
+        ?int                        $id = null
+    )
     {
-        $this->setId($id)
-            ->setName($name)
-            ->setUser($user)
-            ->setCreatedAt();
+        $this->setId($id);
     }
 
     public function getId(): int
@@ -62,30 +65,23 @@ class Category implements JsonSerializable
         return $this;
     }
 
-    public function getCreatedAt(): ?string
-    {
-        return DateTimeHelper::formatDateTime($this->createdAt);
-    }
-
-    public function setCreatedAt(): self
-    {
-        $this->createdAt = new \DateTime();
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(?User $user): self
+    public function getType(): MovementTypeEnum
     {
-        $this->user = $user;
-        return $this;
+        return $this->type;
     }
 
     public function jsonSerialize(): array
     {
         return JsonSerializeHelper::toJson(get_object_vars($this));
+    }
+
+    public function getCreatedAt(): string
+    {
+        return DateTimeHelper::formatDateTime($this->createdAt);
     }
 }

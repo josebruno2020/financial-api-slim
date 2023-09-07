@@ -12,6 +12,8 @@ use Tests\TestCase;
 
 class ListCategoriesActionTest extends TestCase
 {
+    use CategoryActionTestHelper;
+
     public function testAction()
     {
         $app = $this->getAppInstance();
@@ -19,11 +21,11 @@ class ListCategoriesActionTest extends TestCase
         /** @var Container $container */
         $container = $app->getContainer();
 
-        $category = new Category(name: 'Categoria 1');
+        $category = $this->createCategoryMock();
 
         $categoryRepositoryProphecy = $this->prophesize(CategoryRepository::class);
         $categoryRepositoryProphecy
-            ->listCategories('asc')
+            ->listCategories(1, 'asc')
             ->willReturn([$category])
             ->shouldBeCalledOnce();
 
@@ -32,7 +34,7 @@ class ListCategoriesActionTest extends TestCase
         $request = $this->createRequest('GET', '/categories');
         $response = $app->handle($request);
 
-        $payload = (string) $response->getBody();
+        $payload = (string)$response->getBody();
         $expectedPayload = new ActionPayload(200, [$category]);
         $serializedPayload = json_encode($expectedPayload, JSON_PRETTY_PRINT);
 

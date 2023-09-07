@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\User\PasswordRepository;
+use App\Infrastructure\Doctrine\Fixtures\CategoryLoader;
 use App\Infrastructure\Doctrine\Fixtures\PaymentFormLoader;
 use App\Infrastructure\Doctrine\Fixtures\UserLoader;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
@@ -21,6 +22,7 @@ $dir = __DIR__ . '/src/Infrastructure/Doctrine/Fixtures';
 
 $loader = new Loader();
 $loader->addFixture(new PaymentFormLoader());
+$loader->addFixture(new CategoryLoader());
 $loader->addFixture(new UserLoader($container->get(PasswordRepository::class)));
 
 
