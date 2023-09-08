@@ -43,6 +43,10 @@ readonly class DoctrineMovementRepository implements MovementRepository
             $q = $q->andWhere('m.category = :category')
                 ->setParameter('category', $categoryId);
         }
+        if ($type) {
+            $q = $q->andWhere('m.type = :type')
+                ->setParameter('type', $type);
+        }
         return $q->orderBy('m.date', 'desc')->getQuery()->getResult();
     }
 
@@ -122,5 +126,19 @@ readonly class DoctrineMovementRepository implements MovementRepository
             ->orderBy('sum(m.value)', 'desc')
             ->getQuery()
             ->getResult();
+    }
+
+    public function findTotalTypeInMonth(string $month, int $userId): array
+    {
+        $repo = $this->setRepository();
+        $q = $repo->createQueryBuilder('m');
+        return $q->select('sum(m.value) as total, m.type')
+            ->where('m.date LIKE :month')
+            ->andWhere('m.user = :user')
+            ->setParameter('month', "$month%")
+            ->setParameter('user', $userId)
+            ->groupBy('m.type')
+            ->orderBy('m.type', 'asc')
+            ->getQuery()->getResult();
     }
 }

@@ -32,4 +32,6 @@ interface MovementRepository
      * @return array<string, float>
      */
     public function findTotalByTypeAndCategoryInMonth(string $month, MovementTypeEnum $type, int $userId): array;
+
+    public function findTotalTypeInMonth(string $month, int $userId): array;
 }
