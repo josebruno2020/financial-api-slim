@@ -16,7 +16,7 @@ use Doctrine\ORM\EntityRepository;
 readonly class DoctrineMovementRepository implements MovementRepository
 {
     public function __construct(
-        private EntityManager $entityManager,
+        private EntityManager     $entityManager,
         private BalanceRepository $balanceRepository
     )
     {
@@ -30,17 +30,20 @@ readonly class DoctrineMovementRepository implements MovementRepository
     /**
      * @return Movement[] array
      */
-    public function findAllInCurrentMonth(int $userId): array
+    public function findAllInCurrentMonth(int $userId, ?int $categoryId = null, ?MovementTypeEnum $type = null): array
     {
         $currentMonth = date('Y-m');
         $repo = $this->setRepository();
-
-        return $repo->createQueryBuilder('m')
+        $q = $repo->createQueryBuilder('m')
             ->where('m.date LIKE :month')
             ->andWhere('m.user = :user')
             ->setParameter('month', "$currentMonth%")
-            ->setParameter('user', $userId)
-            ->getQuery()->getResult();
+            ->setParameter('user', $userId);
+        if ($categoryId) {
+            $q = $q->andWhere('m.category = :category')
+                ->setParameter('category', $categoryId);
+        }
+        return $q->orderBy('m.date', 'desc')->getQuery()->getResult();
     }
 
     /**
@@ -72,7 +75,7 @@ readonly class DoctrineMovementRepository implements MovementRepository
 
 
         $this->balanceRepository->updateUserBalance(
-            userId:  $data['userId'],
+            userId: $data['userId'],
             newValue: $data['value'],
             type: MovementTypeEnum::make($data['type'])
         );
@@ -107,17 +110,17 @@ readonly class DoctrineMovementRepository implements MovementRepository
     {
         $repo = $this->setRepository();
         $q = $repo->createQueryBuilder('m');
-        return $q->select('sum(m.value) as total, c.name')
-                ->join('m.category', 'c')
-                ->where('m.date LIKE :month')
-                ->andWhere('m.type = :type')
-                ->andWhere('m.user = :user_id')
-                ->setParameter('month', "$month%")
-                ->setParameter('type', $type->value)
-                ->setParameter('user_id', $userId)
-                ->groupBy('c.id')
-                ->orderBy('sum(m.value)', 'desc')
-                ->getQuery()
-                ->getResult();
+        return $q->select('sum(m.value) as total, c.name, c.id')
+            ->join('m.category', 'c')
+            ->where('m.date LIKE :month')
+            ->andWhere('m.type = :type')
+            ->andWhere('m.user = :user_id')
+            ->setParameter('month', "$month%")
+            ->setParameter('type', $type->value)
+            ->setParameter('user_id', $userId)
+            ->groupBy('c.id')
+            ->orderBy('sum(m.value)', 'desc')
+            ->getQuery()
+            ->getResult();
     }
 }

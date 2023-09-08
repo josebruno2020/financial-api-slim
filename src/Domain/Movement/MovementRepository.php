@@ -10,7 +10,7 @@ interface MovementRepository
     /**
      * @return Movement[] array
      */
-    public function findAllInCurrentMonth(int $userId): array;
+    public function findAllInCurrentMonth(int $userId, ?int $categoryId = null, ?MovementTypeEnum $type = null): array;
 
     /**
      * @return Movement[] array

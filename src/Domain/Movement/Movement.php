@@ -46,7 +46,7 @@ class Movement implements \JsonSerializable
     #[Column(type: 'string', nullable: false, enumType: MovementStatusEnum::class, options: ['default' => MovementStatusEnum::PAID])]
     private MovementStatusEnum $status;
 
-    #[ManyToOne(targetEntity: Category::class)]
+    #[ManyToOne(targetEntity: PaymentForm::class)]
     #[JoinColumn(name: 'payment_form_id', referencedColumnName: 'id')]
     private PaymentForm $paymentForm;
 

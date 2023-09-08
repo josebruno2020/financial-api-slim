@@ -27,7 +27,7 @@ class InMemoryCategoryRepository implements CategoryRepository
     /**
      * @return Category[]
      */
-    public function listCategories(int $userId, string $order = 'asc' | 'desc'): array
+    public function listCategories(int $userId, int $type = 1, string $order = 'asc' | 'desc'): array
     {
         return array_values($this->categories);
     }

@@ -6,6 +6,7 @@ use App\Domain\Category\Category;
 use App\Domain\Category\CategoryDeleteNotAllowedException;
 use App\Domain\Category\CategoryNotFoundException;
 use App\Domain\Category\CategoryRepository;
+use App\Domain\Enums\MovementTypeEnum;
 use App\Domain\User\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -29,13 +30,15 @@ class DoctrineCategoryRepository implements CategoryRepository
     /**
      * @return Category[]
      */
-    public function listCategories(int $userId, string $order = 'asc' | 'desc'): array
+    public function listCategories(int $userId, int $type = 1, string $order = 'asc' | 'desc'): array
     {
         $repo = $this->setRepository();
         $q = $repo->createQueryBuilder('c')
         ->where('c.user = :user_id')
         ->orWhere('c.user IS NULL')
-        ->setParameter('user_id', $userId);
+        ->andWhere('c.type = :type')
+        ->setParameter('user_id', $userId)
+        ->setParameter('type', MovementTypeEnum::make($type));
         //TODO: add order by
         return $q->getQuery()->getResult();
     }

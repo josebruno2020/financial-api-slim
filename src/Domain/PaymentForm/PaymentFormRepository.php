@@ -9,5 +9,5 @@ interface PaymentFormRepository
     /**
      * @return PaymentForm[]
      */
-    public function findAll(int $userId): array;
+    public function findAll(): array;
 }
