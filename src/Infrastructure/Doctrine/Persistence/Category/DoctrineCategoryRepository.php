@@ -61,14 +61,18 @@ class DoctrineCategoryRepository implements CategoryRepository
     }
 
     /**
-     * @param array{name: string, userId: ?int} $data
+     * @param array{name: string, userId: ?int, type: int} $data
      * @return Category
      * @throws ORMException
      * @throws OptimisticLockException
      */
     public function createCategory(array $data): Category
     {
-        $category = new Category(name: $data['name'], user: $this->entityManager->getReference(User::class, $data['userId']));
+        $category = new Category(
+            name: $data['name'],
+            user: $this->entityManager->getReference(User::class, $data['userId']),
+            type: MovementTypeEnum::make($data['type'])
+        );
         $this->entityManager->persist($category);
         $this->entityManager->flush();
         
