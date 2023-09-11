@@ -13,8 +13,10 @@ class ListCurrentMonthAction extends MovementAction
         $params = $this->request->getQueryParams();
         $categoryId = $params['category_id'] ?? null;
         $type = $params['type'] ?? null;
-        $movements = $this->movementRepository->findAllInCurrentMonth(
+        $month = $queryParams['month'] ?? date('Y-m');
+        $movements = $this->movementRepository->findAllInMonth(
             userId: RequestHelper::getUserIdFromRequest($this->request),
+            month: $month,
             categoryId: is_numeric($categoryId) ? intval($categoryId) : null,
             type: is_numeric($type) ? MovementTypeEnum::make($type) : null
         );

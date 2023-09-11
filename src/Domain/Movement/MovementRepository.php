@@ -10,7 +10,7 @@ interface MovementRepository
     /**
      * @return Movement[] array
      */
-    public function findAllInCurrentMonth(int $userId, ?int $categoryId = null, ?MovementTypeEnum $type = null): array;
+    public function findAllInMonth(int $userId, string $month, ?int $categoryId = null, ?MovementTypeEnum $type = null): array;
 
     /**
      * @return Movement[] array
@@ -34,4 +34,6 @@ interface MovementRepository
     public function findTotalByTypeAndCategoryInMonth(string $month, MovementTypeEnum $type, int $userId): array;
 
     public function findTotalTypeInMonth(string $month, int $userId): array;
+
+    public function findTotalStatusInMonth(string $month, int $userId): array;
 }

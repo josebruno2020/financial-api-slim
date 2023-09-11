@@ -32,14 +32,13 @@ readonly class DoctrineMovementRepository implements MovementRepository
     /**
      * @return Movement[] array
      */
-    public function findAllInCurrentMonth(int $userId, ?int $categoryId = null, ?MovementTypeEnum $type = null): array
+    public function findAllInMonth(int $userId, string $month, ?int $categoryId = null, ?MovementTypeEnum $type = null): array
     {
-        $currentMonth = date('Y-m');
         $repo = $this->setRepository();
         $q = $repo->createQueryBuilder('m')
             ->where('m.date LIKE :month')
             ->andWhere('m.user = :user')
-            ->setParameter('month', "$currentMonth%")
+            ->setParameter('month', "$month%")
             ->setParameter('user', $userId);
         if ($categoryId) {
             $q = $q->andWhere('m.category = :category')
@@ -152,6 +151,20 @@ readonly class DoctrineMovementRepository implements MovementRepository
             ->setParameter('user', $userId)
             ->groupBy('m.type')
             ->orderBy('m.type', 'asc')
+            ->getQuery()->getResult();
+    }
+
+    public function findTotalStatusInMonth(string $month, int $userId): array
+    {
+        $repo = $this->setRepository();
+        $q = $repo->createQueryBuilder('m');
+        return $q->select('sum(m.value) as total, m.status')
+            ->where('m.date LIKE :month')
+            ->andWhere('m.user = :user')
+            ->setParameter('month', "$month%")
+            ->setParameter('user', $userId)
+            ->groupBy('m.status')
+            ->orderBy('m.status', 'asc')
             ->getQuery()->getResult();
     }
 }
