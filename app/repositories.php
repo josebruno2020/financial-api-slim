@@ -6,12 +6,14 @@ use App\Domain\Auth\AuthRepository;
 use App\Domain\Balance\BalanceRepository;
 use App\Domain\Category\CategoryRepository;
 use App\Domain\Group\GroupRepository;
+use App\Domain\Movement\MovementGroupRepository;
 use App\Domain\Movement\MovementRepository;
 use App\Domain\PaymentForm\PaymentFormRepository;
 use App\Infrastructure\Doctrine\Persistence\Auth\DoctineAuthRepository;
 use App\Infrastructure\Doctrine\Persistence\Balance\DoctrineBalanceRepository;
 use App\Infrastructure\Doctrine\Persistence\Category\DoctrineCategoryRepository;
 use App\Infrastructure\Doctrine\Persistence\Group\DoctrineGroupRepository;
+use App\Infrastructure\Doctrine\Persistence\Movement\DoctineMovementGroupRepository;
 use App\Infrastructure\Doctrine\Persistence\Movement\DoctrineMovementRepository;
 use App\Infrastructure\Doctrine\Persistence\PaymentForm\DoctrinePaymentFormRepository;
 use DI\ContainerBuilder;
@@ -26,6 +28,7 @@ return function (ContainerBuilder $containerBuilder) {
         AuthRepository::class => \DI\autowire(DoctineAuthRepository::class),
         BalanceRepository::class => \DI\autowire(DoctrineBalanceRepository::class),
         PaymentFormRepository::class => \DI\autowire(DoctrinePaymentFormRepository::class),
-        GroupRepository::class => \DI\autowire(DoctrineGroupRepository::class)
+        GroupRepository::class => \DI\autowire(DoctrineGroupRepository::class),
+        MovementGroupRepository::class => \DI\autowire(DoctineMovementGroupRepository::class)
     ]);
 };

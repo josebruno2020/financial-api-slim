@@ -29,7 +29,7 @@ class ListCurrentMonthMovementActionTest extends TestCase
 
         $movementRepositoryProphecy = $this->prophesize(MovementRepository::class);
         $movementRepositoryProphecy
-            ->findAllInMonth(userId: $user->getId(), categoryId: null, type: null)
+            ->findAllInMonth(userId: $user->getId(), month: date('Y-m'), categoryId: null, type: null)
             ->willReturn([$movement])
             ->shouldBeCalledOnce();
 

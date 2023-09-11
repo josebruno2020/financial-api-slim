@@ -1,21 +1,20 @@
 <?php
 
-namespace App\Application\Actions\Movement;
+namespace App\Application\Actions\Movement\MovementGroup;
 
 use App\Application\Helper\RequestHelper;
-use App\Domain\Enums\MovementTypeEnum;
 use Psr\Http\Message\ResponseInterface as Response;
 
-class ListTotalByMonth extends MovementAction
+class ListGroupTotalByMonthAction extends MovementGroupAction
 {    
     protected function action(): Response
     {
         $queryParams = $this->request->getQueryParams();
         $month = $queryParams['month'] ?? date('Y-m');
 
-        $totals = $this->movementRepository->findTotalTypeInMonth(
-            $month,
-            userId: RequestHelper::getUserIdFromRequest($this->request)
+        $totals = $this->movementGroupRepository->findTotalTypeInMonth(
+            groupId: RequestHelper::getGroupIdFromRequest($this->request),
+            month: $month
         );
 
         return $this->respondWithData($totals);

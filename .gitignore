@@ -7,3 +7,5 @@
 .phpunit.result.cache
 .env
 *.sqlite
+clover.xml
+clover/
