@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace Tests\Application\Actions\Movement;
 
 use App\Application\Actions\ActionPayload;
-use App\Domain\Category\Category;
-use App\Domain\Category\CategoryRepository;
-use App\Domain\Movement\Movement;
 use App\Domain\Movement\MovementRepository;
 use DI\Container;
 use Tests\TestCase;
@@ -16,7 +13,7 @@ class ViewMovementActionTest extends TestCase
 {
     use MovementActionTestHelper;
 
-    public function testAction()
+    public function testViewMovementAction()
     {
         $app = $this->getAppInstance();
 

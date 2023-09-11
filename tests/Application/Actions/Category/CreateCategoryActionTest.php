@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace Tests\Application\Actions\Category;
 
 use App\Application\Actions\ActionPayload;
-use App\Domain\Category\Category;
 use App\Domain\Category\CategoryRepository;
 use DI\Container;
+use Tests\Application\Actions\User\UserActionTestHelper;
 use Tests\TestCase;
 
 class CreateCategoryActionTest extends TestCase
 {
     use CategoryActionTestHelper;
+    use UserActionTestHelper;
 
     public function testAction()
     {
@@ -21,7 +22,8 @@ class CreateCategoryActionTest extends TestCase
         /** @var Container $container */
         $container = $app->getContainer();
 
-        $data = ['name' => 'Categoria 1'];
+        $user = $this->createMockUser();
+        $data = ['name' => 'Categoria 1', 'userId' => $user->getId()];
         $category = $this->createCategoryMock();
 
         $categoryRepositoryProphecy = $this->prophesize(CategoryRepository::class);
@@ -32,7 +34,7 @@ class CreateCategoryActionTest extends TestCase
 
         $container->set(CategoryRepository::class, $categoryRepositoryProphecy->reveal());
 
-        $request = $this->createRequest('POST', '/categories')->withParsedBody($data);
+        $request = $this->createRequest('POST', '/categories', user: $user)->withParsedBody($data);
         $response = $app->handle($request);
 
         $payload = (string)$response->getBody();

@@ -5,6 +5,7 @@ namespace App\Domain\Movement;
 use App\Domain\Category\Category;
 use App\Domain\Enums\MovementStatusEnum;
 use App\Domain\Enums\MovementTypeEnum;
+use App\Domain\Group\Group;
 use App\Domain\Helper\DateTimeHelper;
 use App\Domain\Helper\JsonSerializeHelper;
 use App\Domain\PaymentForm\PaymentForm;
@@ -50,6 +51,10 @@ class Movement implements \JsonSerializable
     #[JoinColumn(name: 'payment_form_id', referencedColumnName: 'id')]
     private PaymentForm $paymentForm;
 
+    #[ManyToOne(targetEntity: Group::class)]
+    #[JoinColumn(name: 'group_id', referencedColumnName: 'id')]
+    private ?Group $group;
+
     #[Column(name: 'created_at', type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
     private \DateTime $createdAt;
 
@@ -64,7 +69,8 @@ class Movement implements \JsonSerializable
         ?string     $date = null,
         ?User       $user = null,
         ?string     $obs = null,
-        ?int        $id = null
+        ?int        $id = null,
+        ?Group      $group = null
     )
     {
         $this->setCategory($category)
@@ -75,6 +81,7 @@ class Movement implements \JsonSerializable
             ->setObs($obs)
             ->setId($id)
             ->setUser($user)
+            ->setGroup($group)
             ->setCreatedAt()
             ->setUpdatedAt()
             ->setStatus();
@@ -210,6 +217,17 @@ class Movement implements \JsonSerializable
     public function setPaymentForm(PaymentForm $paymentForm): self
     {
         $this->paymentForm = $paymentForm;
+        return $this;
+    }
+
+    public function getGroup(): ?Group
+    {
+        return $this->group;
+    }
+
+    public function setGroup(?Group $group): self
+    {
+        $this->group = $group;
         return $this;
     }
 

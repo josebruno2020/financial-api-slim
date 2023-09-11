@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace App\Domain\User;
 
 use App\Domain\Enums\UserStatusEnum;
+use App\Domain\Group\Group;
 use App\Domain\Helper\DateTimeHelper;
 use App\Domain\Helper\JsonSerializeHelper;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinTable;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\Table;
 use JsonSerializable;
 
@@ -34,6 +38,10 @@ class User implements JsonSerializable
 
     #[Column(name: 'created_at', type: 'datetime', nullable: true, options: ['defaut' => 'CURRENT_TIMESTAMP'])]
     private \DateTime $createdAt;
+
+    #[ManyToMany(targetEntity: Group::class, inversedBy: 'users')]
+    #[JoinTable(name: 'users_groups')]
+    private Collection $groups;
 
     public function __construct(string $email, string $name, string $password, ?int $id = null)
     {
@@ -117,6 +125,7 @@ class User implements JsonSerializable
     {
         $values = get_object_vars($this);
         unset($values['password']);
+        unset($values['groups']);
         return JsonSerializeHelper::toJson($values);
     }
 }

@@ -92,6 +92,7 @@ class MovementTest extends TestCase
             'obs' => $obs,
             'status' => $movement->getStatus(),
             'paymentForm' => $paymentForm->jsonSerialize(),
+            'group' => null,
             'createdAt' => $createdAt->format('Y-m-d H:i:s'),
             'updatedAt' => $createdAt->format('Y-m-d H:i:s')
         ]);

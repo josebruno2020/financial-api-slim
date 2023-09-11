@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Memory\User;
 
+use App\Domain\Helper\DateTimeHelper;
 use App\Domain\User\User;
 use App\Domain\User\UserNotFoundException;
 use App\Domain\User\UserRepository;
@@ -30,7 +31,11 @@ class InMemoryUserRepository implements UserRepository
      */
     public function findAll(): array
     {
-        return array_values($this->users);
+        $result = [];
+        foreach ($this->users as $key => $user) {
+            $result[] = $user;
+        }
+        return $result;
     }
 
     /**

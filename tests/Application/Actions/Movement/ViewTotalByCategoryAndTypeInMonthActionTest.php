@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace Tests\Application\Actions\Movement;
 
 use App\Application\Actions\ActionPayload;
-use App\Domain\Category\Category;
-use App\Domain\Category\CategoryRepository;
 use App\Domain\Enums\MovementTypeEnum;
 use App\Domain\Movement\MovementRepository;
 use DI\Container;
 use Prophecy\Argument;
+use Tests\Application\Actions\User\UserActionTestHelper;
 use Tests\TestCase;
 
 class ViewTotalByCategoryAndTypeInMonthActionTest extends TestCase
 {
     use MovementActionTestHelper;
+    use UserActionTestHelper;
 
-    public function testAction()
+    public function testViewTotalByCategoryAndMonthAction()
     {
         $app = $this->getAppInstance();
 
@@ -26,18 +26,24 @@ class ViewTotalByCategoryAndTypeInMonthActionTest extends TestCase
 
         $type = 1;
         $totals = [
-            ['Categoria 1' => 52.1]
+            [
+                'name' => 'Categoria 1',
+                'id' => 1,
+                'total' => 52.2
+            ]
         ];
-
+        $user = $this->createMockUser();
         $movementRepositoryProphecy = $this->prophesize(MovementRepository::class);
         $movementRepositoryProphecy
-            ->findTotalByTypeAndCategoryInMonth(Argument::type('string'), Argument::type(MovementTypeEnum::class))
+            ->findTotalByTypeAndCategoryInMonth(
+                Argument::type('string'), Argument::type(MovementTypeEnum::class), userId: $user->getId()
+            )
             ->willReturn($totals)
             ->shouldBeCalledOnce();
 
         $container->set(MovementRepository::class, $movementRepositoryProphecy->reveal());
 
-        $request = $this->createRequest('GET', "/movements/total-category");
+        $request = $this->createRequest('GET', "/movements/total-category", user: $user);
         $response = $app->handle($request);
 
         $payload = (string)$response->getBody();

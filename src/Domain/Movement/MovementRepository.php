@@ -20,7 +20,7 @@ interface MovementRepository
     public function findMovementById(int $id): ?Movement;
 
     /**
-     * @param array{user_id: int, category_id: int, value: float, payment_form_id: int, date: ?string, type: int, userId: int, obs: ?string} $data
+     * @param array{user_id: int, category_id: int, value: float, payment_form_id: int, date: ?string, type: int, userId: int, obs: ?string, group_id: ?int} $data
      * @return Movement
      */
     public function createMovement(array $data): Movement;

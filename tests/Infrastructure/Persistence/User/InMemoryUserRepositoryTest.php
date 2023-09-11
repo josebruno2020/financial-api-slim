@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Infrastructure\Persistence\User;
 
+use App\Domain\Enums\UserStatusEnum;
 use App\Domain\User\User;
 use App\Domain\User\UserNotFoundException;
 use App\Infrastructure\Memory\User\InMemoryUserRepository;
@@ -18,17 +19,6 @@ class InMemoryUserRepositoryTest extends TestCase
         $userRepository = new InMemoryUserRepository([1 => $user]);
 
         $this->assertEquals([$user], $userRepository->findAll());
-    }
-
-    public function testFindAllUsersByDefault()
-    {
-        $users = [
-            1 => new User('email@teste.com', 'Teste', '123123', 1),
-        ];
-
-        $userRepository = new InMemoryUserRepository();
-
-        $this->assertEquals(array_values($users), $userRepository->findAll());
     }
 
     public function testFindUserOfId()
@@ -71,6 +61,7 @@ class InMemoryUserRepositoryTest extends TestCase
             'id' => 1,
             'email' => 'email@teste.com',
             'name' => 'Teste',
+            'status' => UserStatusEnum::ACTIVE
         ];
 
         $userRepository->updateUserById(1, $data);

@@ -55,4 +55,21 @@ class DoctrineBalanceRepository implements BalanceRepository
         $this->entityManager->persist($balance);
         $this->entityManager->flush();
     }
+
+    public function updateUserBalanceOnMovementDelete(int $userId, float $newValue, MovementTypeEnum $type): void
+    {
+        $balance = $this->getByUserId($userId);
+        $currentValue = $balance->getBalance();
+
+        if ($type === MovementTypeEnum::INFLOW) {
+            $currentValue -= $newValue;
+        } else {
+            $currentValue += $newValue;
+        }
+
+        $balance->setBalance($currentValue)
+            ->setUpdatedAt();
+        $this->entityManager->persist($balance);
+        $this->entityManager->flush();
+    }
 }

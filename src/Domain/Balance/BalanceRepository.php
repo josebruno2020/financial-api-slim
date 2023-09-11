@@ -11,4 +11,6 @@ interface BalanceRepository
     public function createBalance(int $userId): Balance;
     
     public function updateUserBalance(int $userId, float $newValue, MovementTypeEnum $type): void;
+
+    public function updateUserBalanceOnMovementDelete(int $userId, float $newValue, MovementTypeEnum $type): void;
 }

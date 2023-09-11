@@ -7,11 +7,13 @@ namespace Tests\Application\Actions\Movement;
 use App\Application\Actions\ActionPayload;
 use App\Domain\Movement\MovementRepository;
 use DI\Container;
+use Tests\Application\Actions\User\UserActionTestHelper;
 use Tests\TestCase;
 
 class ListAllMovementsActionTest extends TestCase
 {
     use MovementActionTestHelper;
+    use UserActionTestHelper;
 
     public function testAction()
     {
@@ -20,17 +22,18 @@ class ListAllMovementsActionTest extends TestCase
         /** @var Container $container */
         $container = $app->getContainer();
 
+        $user = $this->createMockUser();
         $movement = $this->createMockMovement();
 
         $movementRepositoryProphecy = $this->prophesize(MovementRepository::class);
         $movementRepositoryProphecy
-            ->findAll()
+            ->findAll(userId: $user->getId())
             ->willReturn([$movement])
             ->shouldBeCalledOnce();
 
         $container->set(MovementRepository::class, $movementRepositoryProphecy->reveal());
 
-        $request = $this->createRequest('GET', '/movements');
+        $request = $this->createRequest('GET', '/movements', user: $user);
         $response = $app->handle($request);
 
         $payload = (string)$response->getBody();
